@@ -11,13 +11,15 @@
     <tr>
         <th>#</th>
         <th>File Name</th>
+
     </tr>
 
     @foreach (var item in Model.Docs)
     {
         <tr>
             <td>@i</td>
-            <td>@item.FileName</td>
+
+            <td><a asp-page="details" asp-route-id="@item.Id">@item.FileName</a></td>
         </tr>
 
         i++;
