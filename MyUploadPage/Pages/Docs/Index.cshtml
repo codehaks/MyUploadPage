@@ -1,0 +1,27 @@
+﻿@page
+@model MyUploadPage.Pages.Docs.IndexModel
+@{
+    ViewData["Title"] = "Index";
+    var i = 1;
+}
+
+<h1>Index</h1>
+
+<table class="table table-bordered">
+    <tr>
+        <th>#</th>
+        <th>File Name</th>
+    </tr>
+
+    @foreach (var item in Model.Docs)
+    {
+        <tr>
+            <td>@i</td>
+            <td>@item.FileName</td>
+        </tr>
+
+        i++;
+    }
+
+</table>
+

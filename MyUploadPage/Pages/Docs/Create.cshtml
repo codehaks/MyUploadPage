@@ -1,0 +1,13 @@
+﻿@page
+@model MyUploadPage.Pages.Docs.CreateModel
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+<form enctype="multipart/form-data" method="post">
+
+    <input type="file" asp-for="UploadFile" class="form-control-file" />
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+
