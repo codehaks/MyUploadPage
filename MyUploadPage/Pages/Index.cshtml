@@ -4,7 +4,22 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1>Files</h1>
+
+<table>
+    <tr>
+        <th>File Name</th>
+    </tr>
+
+    @foreach (var fileName in Model.Files)
+    {
+        <tr>
+            <td>
+                <a asp-page="download" asp-route-filename="@(new System.IO.FileInfo(fileName).Name)" class="btn btn-outline-primary"> @(new System.IO.FileInfo(fileName).Name)</a>
+
+            </td>
+        </tr>
+    }
+
+
+</table>

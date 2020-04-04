@@ -13,16 +13,21 @@ namespace MyUploadPage.Pages
     public class UploadModel : PageModel
     {
         [BindProperty]
-        public IFormFile UploadFile { get; set; }
+        public IList<IFormFile> UploadFiles { get; set; }
 
-        public IActionResult OnPost([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> OnPost([FromServices] IWebHostEnvironment env)
         {
 
-            var filePath = Path.Combine(env.ContentRootPath, "Files", UploadFile.FileName);
-            using (var stream = System.IO.File.Create(filePath)) 
+
+            foreach (var file in UploadFiles)
             {
-                UploadFile.CopyTo(stream);
+                var filePath = Path.Combine(env.ContentRootPath, "Files", file.FileName);
+
+                using var stream = System.IO.File.Create(filePath);
+
+                await file.CopyToAsync(stream);
             }
+
             return RedirectToPage("Index");
         }
     }

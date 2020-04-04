@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
@@ -16,10 +18,11 @@ namespace MyUploadPage.Pages
         {
             _logger = logger;
         }
-
-        public void OnGet()
+        public IList<string> Files { get; set; }
+        public void OnGet([FromServices] IWebHostEnvironment env)
         {
-
+            var folderPath = Path.Combine(env.ContentRootPath, "Files");
+            Files = System.IO.Directory.EnumerateFiles(folderPath).ToList();
         }
     }
 }
