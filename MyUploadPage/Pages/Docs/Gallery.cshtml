@@ -8,6 +8,6 @@
 
 @foreach (var photo in Model.Photos)
 {
-    <img src="@Url.Page("Gallery","File",new {Id=photo.Id })" class="img-fluid" style="max-height:300px" />
+    <img src="@Url.Action("GetFile","Doc",new {Id=photo.Id })" class="img-fluid" style="max-height:300px" />
     <br />
 }
