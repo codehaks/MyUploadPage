@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MyUploadPage.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,7 @@ namespace MyUploadPage.Data
            : base(options)
         {
         }
+
+        public DbSet<Doc> Docs { get; set; }
     }
 }
