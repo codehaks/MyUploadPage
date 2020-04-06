@@ -29,6 +29,7 @@ namespace MyUploadPage
                (options => options.UseSqlite("Data Source=app.sqlite"));
 
             services.AddRazorPages();
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,6 +56,7 @@ namespace MyUploadPage
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+                endpoints.MapControllers();
             });
         }
     }

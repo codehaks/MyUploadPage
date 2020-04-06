@@ -1,0 +1,12 @@
+﻿@page
+@model MyUploadPage.Pages.Docs.GalleryModel
+@{
+    ViewData["Title"] = "Gallery";
+}
+
+<h1>Gallery</h1>
+
+@foreach (var item in Model.Docs)
+{
+    <img src="@Url.Action("GetFile","Doc",new {Id=item.Id,FileName=item.FileName })" class="img-fluid" style="max-height:300px"/>
+}
