@@ -11,6 +11,7 @@
     <tr>
         <th>#</th>
         <th>File Name</th>
+        <th></th>
     </tr>
 
     @foreach (var item in Model.Docs)
@@ -18,6 +19,9 @@
         <tr>
             <td>@i</td>
             <td>@item.FileName</td>
+            <td>
+                <a asp-action="GetFile" asp-controller="Doc" asp-route-id="@item.Id" asp-route-filename="@item.FileName" class="btn btn-primary">Download</a>
+            </td>
         </tr>
 
         i++;
