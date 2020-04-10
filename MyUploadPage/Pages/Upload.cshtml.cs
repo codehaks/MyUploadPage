@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace MyUploadPage.Pages
 {
+
+    [RequestFormLimits(MultipartBodyLengthLimit = 2097152000)]
+    [RequestSizeLimit(2097152000)]
     public class UploadModel : PageModel
     {
         [BindProperty]
