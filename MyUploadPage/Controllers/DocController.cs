@@ -32,8 +32,38 @@ namespace MyUploadPage.Controllers
             return File(doc.Data, doc.ContentType, doc.FileName);
         }
 
+        private static async Task StreamCopyFilesAsync()
+        {
+            byte[] buffer = new byte[16 * 1024];
+            var files = System.IO.Directory.GetFiles(@"E:\Projects\Data\1m_faces_00\1m_faces_00");
+
+            var c = 0;
+            foreach (var file in files)
+            {
+                Console.WriteLine(file);
+                long totalBytes = new FileInfo(file).Length;
+
+                using var output = System.IO.File.Create(@"E:\Projects\Data\faces2\" + c + ".jpg");
+
+                Stream input = new FileStream(file, FileMode.Open);
+                long totalReadBytes = 0;
+                int readBytes;
+
+                while ((readBytes = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    await output.WriteAsync(buffer, 0, readBytes);
+                    totalReadBytes += readBytes;
+                }
+
+                c++;
+
+
+
+            }
+        }
+
         [Route("api/doc/file/stream/{docId}")]
-        public IActionResult GetFileStream(string docId)
+        public async Task<IActionResult> GetFileStream(string docId)
         {
 
             using TransactionScope transactionScope2 = new TransactionScope();
@@ -53,13 +83,30 @@ namespace MyUploadPage.Controllers
 
             var sqlFileStream = new SqlFileStream(filePath, tranContext, FileAccess.Read);
 
-            byte[] data = new byte[sqlFileStream.Length];
+            //-------------------
+            byte[] buffer = new byte[16 * 1024];
+            long totalBytes = sqlFileStream.Length;
 
-            sqlFileStream.Read(data, 0, Convert.ToInt32(sqlFileStream.Length));
+            var output = new MemoryStream();
+
+            long totalReadBytes = 0;
+            int readBytes;
+
+            while ((readBytes = sqlFileStream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                await output.WriteAsync(buffer, 0, readBytes);
+                totalReadBytes += readBytes;
+            }
+
+            //-------------------
+
+            //byte[] data = new byte[sqlFileStream.Length];
+            //sqlFileStream.Read(data, 0, Convert.ToInt32(sqlFileStream.Length));
+
             sqlFileStream.Close();
 
-
-            return File(data,contentType,fileName,true);
+            output.Position = 0;
+            return File(output,contentType,fileName,true);
         }
 
         [Route("api/doc/image/{id}/{width}x{height}/{FileName?}")]
