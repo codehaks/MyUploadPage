@@ -7,7 +7,8 @@ namespace MyUploadPage.Models
 {
     public class Doc
     {
-        public int Id { get; set; }
+        
+        public Guid Id { get; set; }
         public string FileName { get; set; }
         public string ContentType { get; set; }
         public string Extention { get; set; }

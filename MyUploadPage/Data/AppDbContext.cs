@@ -13,6 +13,11 @@ namespace MyUploadPage.Data
            : base(options)
         {
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Doc>()
+                .HasIndex(c=>c.Id).IsUnique();
+        }
 
         public DbSet<Doc> Docs { get; set; }
     }
