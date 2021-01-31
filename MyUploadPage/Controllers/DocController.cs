@@ -7,6 +7,7 @@ using System.Transactions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Data.SqlTypes;
+using Microsoft.Net.Http.Headers;
 using MyUploadPage.Data;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
@@ -63,18 +64,19 @@ namespace MyUploadPage.Controllers
         }
 
         [Route("api/doc/file/stream/{docId}")]
-        public async Task<IActionResult> GetFileStream(string docId)
+        public async Task GetFileStream(string docId)
         {
 
-            using TransactionScope transactionScope2 = new TransactionScope();
+            using TransactionScope tranScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-            SqlConnection sqlConnection3 = new SqlConnection(@"Data Source=CODEHAKS\MSSQL2019;Initial Catalog=UploadDb02;integrated security=true");
+            
+            SqlConnection connection = new SqlConnection(@"Data Source=CODEHAKS\MSSQL2019;Initial Catalog=UploadDb02;integrated security=true");
 
-            SqlCommand sqlCommand3 = sqlConnection3.CreateCommand();
-            sqlCommand3.CommandText = "Select FileName,ContentType, Data.PathName() As Path,GET_FILESTREAM_TRANSACTION_CONTEXT() As TransactionContext From Docs Where Id ='" + docId+"'";
+            SqlCommand command = connection.CreateCommand();
+            command.CommandText = "Select FileName,ContentType, Data.PathName() As Path,GET_FILESTREAM_TRANSACTION_CONTEXT() As TransactionContext From Docs Where Id ='" + docId + "'";
 
-            sqlConnection3.Open();
-            SqlDataReader reader = sqlCommand3.ExecuteReader();
+            connection.Open();
+            SqlDataReader reader = command.ExecuteReader();
             reader.Read();
             string filePath = (string)reader["Path"];
             string fileName = (string)reader["FileName"];
@@ -83,30 +85,33 @@ namespace MyUploadPage.Controllers
 
             var sqlFileStream = new SqlFileStream(filePath, tranContext, FileAccess.Read);
 
+            this.Response.StatusCode = 200;
+            this.Response.Headers.Add(HeaderNames.ContentDisposition, $"attachment; filename=\"{fileName}\"");
+            this.Response.Headers.Add(HeaderNames.ContentType, "application/octet-stream");
+
             //-------------------
             byte[] buffer = new byte[16 * 1024];
             long totalBytes = sqlFileStream.Length;
 
-            var output = new MemoryStream();
-
             long totalReadBytes = 0;
             int readBytes;
 
+            var outputStream = this.Response.Body;
+
             while ((readBytes = sqlFileStream.Read(buffer, 0, buffer.Length)) > 0)
             {
-                await output.WriteAsync(buffer, 0, readBytes);
+                await outputStream.WriteAsync(buffer, 0, readBytes);
                 totalReadBytes += readBytes;
             }
 
             //-------------------
 
-            //byte[] data = new byte[sqlFileStream.Length];
-            //sqlFileStream.Read(data, 0, Convert.ToInt32(sqlFileStream.Length));
-
             sqlFileStream.Close();
+            tranScope.Complete();
 
-            output.Position = 0;
-            return File(output,contentType,fileName,true);
+
+            await outputStream.FlushAsync();
+
         }
 
         [Route("api/doc/image/{id}/{width}x{height}/{FileName?}")]
