@@ -32,29 +32,34 @@ namespace MyUploadPage.Controllers
             return File(doc.Data, doc.ContentType, doc.FileName);
         }
 
-        public IActionResult GetFileStream()
+        [Route("api/doc/file/stream/{docId}")]
+        public IActionResult GetFileStream(string docId)
         {
 
             using TransactionScope transactionScope2 = new TransactionScope();
 
-            SqlConnection sqlConnection3 = new SqlConnection("Data Source=.;Initial Catalog = FileSystemDB; Integrated Security = True");
+            SqlConnection sqlConnection3 = new SqlConnection(@"Data Source=CODEHAKS\MSSQL2019;Initial Catalog=UploadDb02;integrated security=true");
 
             SqlCommand sqlCommand3 = sqlConnection3.CreateCommand();
-            sqlCommand3.CommandText = "Select FileData.PathName() As Path,GET_FILESTREAM_TRANSACTION_CONTEXT() As TransactionContext From PictureTable Where PkId = (Select Max(PkId) From PictureTable)";
+            sqlCommand3.CommandText = "Select FileName,ContentType, Data.PathName() As Path,GET_FILESTREAM_TRANSACTION_CONTEXT() As TransactionContext From Docs Where Id ='" + docId+"'";
+
             sqlConnection3.Open();
             SqlDataReader reader = sqlCommand3.ExecuteReader();
             reader.Read();
             string filePath = (string)reader["Path"];
-            byte[] transactionContext2 = (byte[])reader["TransactionContext"];
-            SqlFileStream sqlFileStream2 = new SqlFileStream
-                (filePath, transactionContext2, FileAccess.Read);
-            byte[] data = new byte[sqlFileStream2.Length];
-            sqlFileStream2.Read(data, 0, Convert.ToInt16(sqlFileStream2.Length));
-            Guid valueInserted = new Guid(data);
-            sqlFileStream2.Close();
+            string fileName = (string)reader["FileName"];
+            string contentType = (string)reader["ContentType"];
+            var tranContext = (byte[])reader["TransactionContext"];
+
+            var sqlFileStream = new SqlFileStream(filePath, tranContext, FileAccess.Read);
+
+            byte[] data = new byte[sqlFileStream.Length];
+
+            sqlFileStream.Read(data, 0, Convert.ToInt32(sqlFileStream.Length));
+            sqlFileStream.Close();
 
 
-            return Ok();
+            return File(data,contentType,fileName,true);
         }
 
         [Route("api/doc/image/{id}/{width}x{height}/{FileName?}")]

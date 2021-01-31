@@ -21,6 +21,7 @@
             <td>@item.FileName</td>
             <td>
                 <a asp-action="GetFile" asp-controller="Doc" asp-route-id="@item.Id" asp-route-filename="@item.FileName" class="btn btn-primary">Download</a>
+                <a asp-action="GetFileStream" asp-controller="Doc" asp-route-docid="@item.Id" asp-route-filename="@item.FileName" class="btn btn-primary">Download Stream</a>
             </td>
         </tr>
 
