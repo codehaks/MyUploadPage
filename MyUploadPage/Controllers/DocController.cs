@@ -23,7 +23,7 @@ namespace MyUploadPage.Controllers
         }
 
         [Route("api/doc/file/{id}/{FileName}")]
-        public IActionResult GetFile(int id,string fileName)
+        public IActionResult GetFile(Guid id,string fileName)
         {
             var doc = _db.Docs.Find(id);
             return File(doc.Data,doc.ContentType,doc.FileName);
