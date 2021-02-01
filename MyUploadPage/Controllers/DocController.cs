@@ -36,15 +36,15 @@ namespace MyUploadPage.Controllers
         public IActionResult GetFileStream(string docId)
         {
 
-            using TransactionScope transactionScope2 = new TransactionScope();
+            using TransactionScope ts = new TransactionScope();
 
-            SqlConnection sqlConnection3 = new SqlConnection(@"Data Source=CODEHAKS\MSSQL2019;Initial Catalog=UploadDb02;integrated security=true");
+            SqlConnection scon = new SqlConnection(@"Data Source=CODEHAKS\MSSQL2019;Initial Catalog=UploadDb02;integrated security=true");
 
-            SqlCommand sqlCommand3 = sqlConnection3.CreateCommand();
-            sqlCommand3.CommandText = "Select FileName,ContentType, Data.PathName() As Path,GET_FILESTREAM_TRANSACTION_CONTEXT() As TransactionContext From Docs Where Id ='" + docId+"'";
+            SqlCommand cmd = scon.CreateCommand();
+            cmd.CommandText = "Select FileName,ContentType, Data.PathName() As Path,GET_FILESTREAM_TRANSACTION_CONTEXT() As TransactionContext From Docs Where Id ='" + docId+"'";
 
-            sqlConnection3.Open();
-            SqlDataReader reader = sqlCommand3.ExecuteReader();
+            scon.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
             reader.Read();
             string filePath = (string)reader["Path"];
             string fileName = (string)reader["FileName"];
