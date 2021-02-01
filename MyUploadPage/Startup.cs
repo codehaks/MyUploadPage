@@ -25,7 +25,7 @@ namespace MyUploadPage
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AppDbContext>
-               (options => options.UseSqlServer(@"Data Source=CODEHAKS\MSSQL2019;Initial Catalog=UploadDb02;integrated security=true"));
+               (options => options.UseSqlServer(@"Data Source=CODEHAKS\MSSQL2019;Initial Catalog=A_DocDb;integrated security=true"));
 
             services.AddRazorPages();
             services.AddControllers();
